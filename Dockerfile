@@ -86,8 +86,7 @@ EXPOSE 8080 5555 8793
 
 USER airflow
 RUN curl -s "https://get.sdkman.io" | /bin/bash
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh"
-RUN /bin/bash -c '$HOME/.sdkman/bin/sdkman-init.sh; \
+RUN /bin/bash -c 'source $HOME/.sdkman/bin/sdkman-init.sh; \
 sdk install java 8.0.252.hs-adpt; \
 sdk install spark 2.4.6;'
 
