@@ -50,6 +50,10 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        wget \
+        gnupg \
+        zip \
+        unzip \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -81,6 +85,14 @@ RUN chown -R airflow: ${AIRFLOW_USER_HOME}
 EXPOSE 8080 5555 8793
 
 USER airflow
+RUN curl -s "https://get.sdkman.io" | /bin/bash
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh"
+RUN /bin/bash -c '$HOME/.sdkman/bin/sdkman-init.sh; \
+sdk install java 8.0.252.hs-adpt; \
+sdk install spark 2.4.6;'
+
+#$HOME/.local/bin
+
 WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"]
