@@ -89,8 +89,19 @@ RUN curl -s "https://get.sdkman.io" | /bin/bash
 RUN /bin/bash -c 'source $HOME/.sdkman/bin/sdkman-init.sh; \
 sdk install java 8.0.252.hs-adpt; \
 sdk install spark 2.4.6;'
+WORKDIR /tmp/download/
 
-#$HOME/.local/bin
+RUN /bin/bash -c 'wget https://github.com/peak/s5cmd/releases/download/v1.0.0/s5cmd_1.0.0_Linux-64bit.tar.gz; \
+tar -xvf s5cmd_1.0.0_Linux-64bit.tar.gz; \
+mv s5cmd $HOME/.local/bin/; \
+chmod +x $HOME/.local/bin/s5cmd;'
+
+RUN /bin/bash -c 'wget https://github.com/colinmarc/hdfs/releases/download/v2.1.1/gohdfs-v2.1.1-linux-amd64.tar.gz; \
+tar -xvf gohdfs-v2.1.1-linux-amd64.tar.gz; \
+mv hdfs $HOME/.local/bin/; \
+chmod +x $HOME/.local/bin/hdfs;'
+
+RUN /bin/bash -c 'rm -rf /tmp/download/'
 
 WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
