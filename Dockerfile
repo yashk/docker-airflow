@@ -116,6 +116,12 @@ chmod +x $HOME/.local/bin/hdfs'
 
 RUN /bin/bash -c 'rm -rf $HOME/tmp'
 
+ARG AWS_ACCESS_KEY_ID=placeholder_access_key_id
+ENV AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+
+ARG AWS_SECRET_ACCESS_KEY=placeholder_secret_access_key
+ENV AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+
 WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"]
