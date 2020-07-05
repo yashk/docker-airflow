@@ -5,3 +5,4 @@ docker run \
 -e AWS_ACCESS_KEY_ID='placeholder' \
 -e AWS_SECRET_ACCESS_KEY='placeholder' \
 yashk/docker-airflow:latest
+
