@@ -126,6 +126,14 @@ ENV HADOOP_HOME="${AIRFLOW_USER_HOME}/hadoop"
 # volume -v /var/lib/mesos/spark/spark-2.4.6-bin-hadoop2.7/hdfs:/usr/local/airflow/hadoop/conf
 ENV HADOOP_CONF_DIR="${AIRFLOW_USER_HOME}/hadoop/conf"
 
+#airflow env vars
+ENV AIRFLOW__CORE__FERNET_KEY="placeholder"
+ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN="placeholder"
+ENV AIRFLOW_CONN_AWS_DEFAULT="placeholder"
+ENV AIRFLOW_CONN_SPARK_DEFAULT="placeholder"
+ENV EXECUTOR="placeholder"
+
+
 
 WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
