@@ -90,6 +90,8 @@ RUN /bin/bash -c 'source $HOME/.sdkman/bin/sdkman-init.sh; \
 sdk install java 8.0.252.hs-adpt; \
 sdk install spark 2.4.6;'
 
+RUN /bin/bash -c 'cp /usr/local/airflow/.sdkman/candidates/spark/current/conf/spark-env.sh.template /usr/local/airflow/.sdkman/candidates/spark/current/conf/spark-env.sh && \
+echo JAVA_HOME=/usr/local/airflow/.sdkman/candidates/java/current >> /usr/local/airflow/.sdkman/candidates/spark/current/conf/spark-env.sh'
 
 RUN /bin/bash -c 'mkdir -p $HOME/tmp && \
 mkdir -p $HOME/.local/bin/'
