@@ -116,11 +116,16 @@ chmod +x $HOME/.local/bin/hdfs'
 
 RUN /bin/bash -c 'rm -rf $HOME/tmp'
 
-ARG AWS_ACCESS_KEY_ID=placeholder_access_key_id
-ENV AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+RUN /bin/bash -c 'mkdir -p $HOME/hadoop/conf && \
+ls -lrth $HOME/hadoop/conf'
 
-ARG AWS_SECRET_ACCESS_KEY=placeholder_secret_access_key
-ENV AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+# envs
+ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
+ENV AWS_SECRET_ACCESS_KEY="placeholder_secret_access_key"
+ENV HADOOP_HOME="${AIRFLOW_USER_HOME}/hadoop"
+# volume -v /var/lib/mesos/spark/spark-2.4.6-bin-hadoop2.7/hdfs:/usr/local/airflow/hadoop/conf
+ENV HADOOP_CONF_DIR="${AIRFLOW_USER_HOME}/hadoop/conf"
+
 
 WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
