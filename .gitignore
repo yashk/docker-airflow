@@ -26,4 +26,5 @@ sftp-config.json
 __pycache__
 
 #
-run_local.sh
+run_local*
+airflow_vars.env
