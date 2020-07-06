@@ -99,7 +99,7 @@ chmod +x /usr/local/bin/s5cmd'
 
 RUN /bin/bash -c 'wget https://github.com/colinmarc/hdfs/releases/download/v2.1.1/gohdfs-v2.1.1-linux-amd64.tar.gz && \
 tar -xvf gohdfs-v2.1.1-linux-amd64.tar.gz && \
-mv /tmp/gohdfs-v2.1.1-linux-amd64/hdfs $/usr/local/bin/ && \
+mv /tmp/gohdfs-v2.1.1-linux-amd64/hdfs /usr/local/bin/ && \
 chmod +x /usr/local/bin/hdfs'
 
 RUN /bin/bash -c 'rm -rf /tmp/*'
