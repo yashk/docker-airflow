@@ -82,9 +82,8 @@ COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
 # install sdkman and using it java and and spark-submit
 RUN /bin/bash -c 'export SDKMAN_DIR="/usr/local/sdkman" && curl -s "https://get.sdkman.io" | /bin/bash'
-RUN /bin/bash -c 'source /usr/local/sdkman/bin/sdkman-init.sh && \
-sdk install java 8.0.252.hs-adpt && \
-sdk install spark 2.4.6'
+RUN /bin/bash -c '/usr/local/sdkman/bin/sdk install java 8.0.252.hs-adpt && \
+/usr/local/sdkman/bin/sdk install spark 2.4.6'
 
 RUN /bin/bash -c 'cp /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh.template /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh && \
 echo JAVA_HOME=/usr/local/sdkman/candidates/java/current >> /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh'
