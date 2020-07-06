@@ -122,10 +122,10 @@ RUN /bin/bash -c 'mkdir -p $HOME/hadoop/conf && \
 ls -lrth $HOME/hadoop/conf'
 
 RUN /bin/bash -c 'mkdir -p $HOME/data && \
-ls -lrth $HOME/hadoop/data'
+ls -lrth $HOME/data'
 
 RUN /bin/bash -c 'mkdir -p $HOME/dags && \
-ls -lrth $HOME/hadoop/data'
+ls -lrth $HOME/dags'
 
 # envs
 ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
