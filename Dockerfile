@@ -80,11 +80,8 @@ RUN set -ex \
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
-RUN chown -R airflow: ${AIRFLOW_USER_HOME}
-
 EXPOSE 8080 5555 8793
 
-USER airflow
 RUN curl -s "https://get.sdkman.io" | /bin/bash
 RUN /bin/bash -c 'source $HOME/.sdkman/bin/sdkman-init.sh; \
 sdk install java 8.0.252.hs-adpt; \
@@ -98,7 +95,6 @@ mkdir -p $HOME/.local/bin/'
 
 RUN /bin/bash -c 'pwd;ls -lrth $HOME/tmp && \
 ls -lrth $HOME/.local/bin/'
-
 
 WORKDIR ${AIRFLOW_USER_HOME}/tmp
 
@@ -128,6 +124,8 @@ RUN /bin/bash -c 'mkdir -p $HOME/dags && \
 ls -lrth $HOME/dags'
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
+USER airflow
+
 
 # envs
 ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
