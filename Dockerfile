@@ -127,6 +127,8 @@ ls -lrth $HOME/data'
 RUN /bin/bash -c 'mkdir -p $HOME/dags && \
 ls -lrth $HOME/dags'
 
+RUN chown -R airflow: ${AIRFLOW_USER_HOME}
+
 # envs
 ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
 ENV AWS_SECRET_ACCESS_KEY="placeholder_secret_access_key"
