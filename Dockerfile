@@ -80,52 +80,44 @@ RUN set -ex \
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
-EXPOSE 8080 5555 8793
+# install sdkman and using it java and and spark-submit
+RUN /bin/bash -c 'export SDKMAN_DIR="/usr/local/sdkman" && curl -s "https://get.sdkman.io" | /bin/bash'
+RUN /bin/bash -c 'source /usr/local/sdkman/bin/sdkman-init.sh && \
+sdk install java 8.0.252.hs-adpt && \
+sdk install spark 2.4.6'
 
-RUN curl -s "https://get.sdkman.io" | /bin/bash
-RUN /bin/bash -c 'source $HOME/.sdkman/bin/sdkman-init.sh; \
-sdk install java 8.0.252.hs-adpt; \
-sdk install spark 2.4.6;'
+RUN /bin/bash -c 'cp /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh.template /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh && \
+echo JAVA_HOME=/usr/local/sdkman/candidates/java/current >> /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh'
 
-RUN /bin/bash -c 'cp /usr/local/airflow/.sdkman/candidates/spark/current/conf/spark-env.sh.template /usr/local/airflow/.sdkman/candidates/spark/current/conf/spark-env.sh && \
-echo JAVA_HOME=/usr/local/airflow/.sdkman/candidates/java/current >> /usr/local/airflow/.sdkman/candidates/spark/current/conf/spark-env.sh'
-
-RUN /bin/bash -c 'mkdir -p $HOME/tmp && \
-mkdir -p $HOME/.local/bin/'
-
-RUN /bin/bash -c 'pwd;ls -lrth $HOME/tmp && \
-ls -lrth $HOME/.local/bin/'
-
-WORKDIR ${AIRFLOW_USER_HOME}/tmp
-
-RUN /bin/bash -c 'pwd;ls -lrth $HOME/tmp && \
-ls -lrth $HOME/.local/bin/'
+WORKDIR /tmp
 
 RUN /bin/bash -c 'wget https://github.com/peak/s5cmd/releases/download/v1.0.0/s5cmd_1.0.0_Linux-64bit.tar.gz && \
 tar -xvf s5cmd_1.0.0_Linux-64bit.tar.gz && \
-mv s5cmd $HOME/.local/bin/ && \
-chmod +x $HOME/.local/bin/s5cmd'
+mv s5cmd /usr/local/bin/ && \
+chmod +x /usr/local/bin/s5cmd'
 
 
 RUN /bin/bash -c 'wget https://github.com/colinmarc/hdfs/releases/download/v2.1.1/gohdfs-v2.1.1-linux-amd64.tar.gz && \
 tar -xvf gohdfs-v2.1.1-linux-amd64.tar.gz && \
-mv $HOME/tmp/gohdfs-v2.1.1-linux-amd64/hdfs $HOME/.local/bin/ && \
-chmod +x $HOME/.local/bin/hdfs'
+mv /tmp/gohdfs-v2.1.1-linux-amd64/hdfs $/usr/local/bin/ && \
+chmod +x /usr/local/bin/hdfs'
 
-RUN /bin/bash -c 'rm -rf $HOME/tmp'
+RUN /bin/bash -c 'rm -rf /tmp/*'
 
-RUN /bin/bash -c 'mkdir -p $HOME/hadoop/conf && \
-ls -lrth $HOME/hadoop/conf'
+RUN /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/hadoop/conf && \
+ls -lrth ${AIRFLOW_USER_HOME}/hadoop/conf'
 
-RUN /bin/bash -c 'mkdir -p $HOME/data && \
-ls -lrth $HOME/data'
+RUN /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/data && \
+ls -lrth ${AIRFLOW_USER_HOME}/data'
 
-RUN /bin/bash -c 'mkdir -p $HOME/dags && \
-ls -lrth $HOME/dags'
+RUN /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/dags && \
+ls -lrth ${AIRFLOW_USER_HOME}/dags'
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
-USER airflow
 
+EXPOSE 8080 5555 8793
+
+USER airflow
 
 # envs
 ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
