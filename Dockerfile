@@ -121,6 +121,12 @@ RUN /bin/bash -c 'rm -rf $HOME/tmp'
 RUN /bin/bash -c 'mkdir -p $HOME/hadoop/conf && \
 ls -lrth $HOME/hadoop/conf'
 
+RUN /bin/bash -c 'mkdir -p $HOME/data && \
+ls -lrth $HOME/hadoop/data'
+
+RUN /bin/bash -c 'mkdir -p $HOME/dags && \
+ls -lrth $HOME/hadoop/data'
+
 # envs
 ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
 ENV AWS_SECRET_ACCESS_KEY="placeholder_secret_access_key"
@@ -131,8 +137,8 @@ ENV HADOOP_CONF_DIR="${AIRFLOW_USER_HOME}/hadoop/conf"
 #airflow env vars
 ENV AIRFLOW__CORE__FERNET_KEY="placeholder"
 ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN="placeholder"
-ENV AIRFLOW_CONN_AWS_DEFAULT="placeholder"
-ENV AIRFLOW_CONN_SPARK_DEFAULT="placeholder"
+ENV AIRFLOW_CONN_SPARK_OVH="placeholder"
+ENV AIRFLOW_CONN_AWS_OVH="placeholder"
 ENV EXECUTOR="placeholder"
 
 
