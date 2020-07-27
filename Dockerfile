@@ -104,14 +104,14 @@ RUN set -ex \
        mv gohdfs-v2.1.1-linux-amd64/hdfs /usr/local/bin/ && \
        rm -rf  gohdfs-v2.1.1-linux-amd64.tar.gz gohdfs-v2.1.1-linux-amd64 && \
        chmod +x /usr/local/bin/hdfs' \
+    && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/hadoop/conf && \
+           ls -lrth ${AIRFLOW_USER_HOME}/hadoop/conf' \
     && /bin/bash -c 'wget http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/hadoop-2.7.3.tar.gz && \
        tar -xvzf hadoop-2.7.3.tar.gz && \
        mv hadoop-2.7.3 hadoop && \
        mv hadoop /usr/local/ && \
        ls -lrth /usr/local/hadoop && \
-       echo "export JAVA_HOME=/usr/local/sdkman/candidates/java/current" > /usr/local/hadoop/conf/hadoop-env.sh' \
-    && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/hadoop/conf && \
-       ls -lrth ${AIRFLOW_USER_HOME}/hadoop/conf' \
+       echo "export JAVA_HOME=/usr/local/sdkman/candidates/java/current" > ${AIRFLOW_USER_HOME}/hadoop/conf/hadoop-env.sh' \
     && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/data && \
        ls -lrth ${AIRFLOW_USER_HOME}/data' \
     && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/dags && \
