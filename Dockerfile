@@ -115,10 +115,13 @@ RUN set -ex \
     && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/data && \
        ls -lrth ${AIRFLOW_USER_HOME}/data' \
     && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/dags && \
-       ls -lrth ${AIRFLOW_USER_HOME}/dags' \
-    && /bin/bash -c 'export PYENV_ROOT="/usr/local/pyenv" && curl https://pyenv.run | /bin/bash' \
-    && /bin/bash -c 'export PATH="/usr/local/pyenv/bin:$PATH" && pyenv install 3.6.8' \
-    && /bin/bash -c '{ \
+       ls -lrth ${AIRFLOW_USER_HOME}/dags'
+
+RUN set -ex \
+     && /bin/bash -c 'git version; /usr/bin/git version;command -v git' \
+     && /bin/bash -c 'export PYENV_ROOT="/usr/local/pyenv" && curl https://pyenv.run | /bin/bash' \
+     && /bin/bash -c 'export PATH="/usr/local/pyenv/bin:$PATH" && pyenv install 3.6.8' \
+     && /bin/bash -c '{ \
                         echo boto3; \
                         echo matplotlib==3.2.1; \
                         echo flask; \
@@ -132,7 +135,7 @@ RUN set -ex \
                         echo python-dateutil; \
                         echo requests; \
                         echo seaborn; } > requirements.txt' \
-    && '/usr/local/pyenv/versions/3.6.8/bin/pip3.6 install -r requirements.txt'
+     && '/usr/local/pyenv/versions/3.6.8/bin/pip3.6 install -r requirements.txt'
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
