@@ -1,1 +1,1 @@
-docker build -t yashk/docker-airflow:latest .
+docker build -t yashk/docker-airflow:pyspark .
