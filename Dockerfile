@@ -54,6 +54,18 @@ RUN set -ex \
         gnupg \
         zip \
         unzip \
+        zlib1g-dev \
+        libbz2-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        llvm \
+        libncurses5-dev \
+        libncursesw5-dev \
+        xz-utils \
+        tk-dev \
+        libffi-dev \
+        liblzma-dev \
+        python-openssl
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -75,44 +87,53 @@ RUN set -ex \
         /var/tmp/* \
         /usr/share/man \
         /usr/share/doc \
-        /usr/share/doc-base
+        /usr/share/doc-base \
+    && /bin/bash -c 'export SDKMAN_DIR="/usr/local/sdkman" && curl -s "https://get.sdkman.io?rcupdate=false" | /bin/bash' \
+    && /bin/bash -c 'export SDKMAN_DIR="/usr/local/sdkman" && source /usr/local/sdkman/bin/sdkman-init.sh && \
+       sdk install java 8.0.252.hs-adpt && \
+       sdk install spark 2.4.6' \
+    && /bin/bash -c 'cp /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh.template /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh && \
+       echo JAVA_HOME=/usr/local/sdkman/candidates/java/current >> /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh' \
+    && /bin/bash -c 'wget https://github.com/peak/s5cmd/releases/download/v1.0.0/s5cmd_1.0.0_Linux-64bit.tar.gz && \
+       tar -xvf s5cmd_1.0.0_Linux-64bit.tar.gz && \
+       mv s5cmd /usr/local/bin/ && \
+       rm -rf s5cmd_1.0.0_Linux-64bit.tar.gz CHANGELOG.md LICENSE README.md\
+       chmod +x /usr/local/bin/s5cmd' \
+    && /bin/bash -c 'wget https://github.com/colinmarc/hdfs/releases/download/v2.1.1/gohdfs-v2.1.1-linux-amd64.tar.gz && \
+       tar -xvf gohdfs-v2.1.1-linux-amd64.tar.gz && \
+       mv gohdfs-v2.1.1-linux-amd64/hdfs /usr/local/bin/ && \
+       rm -rf  gohdfs-v2.1.1-linux-amd64.tar.gz gohdfs-v2.1.1-linux-amd64 \
+       chmod +x /usr/local/bin/hdfs' \
+    && /bin/bash -c 'wget http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/hadoop-2.7.3.tar.gz && \
+       tar -xvzf hadoop-2.7.3.tar.gz \
+       mv hadoop-2.7.3 /usr/local/hadoop \
+       echo "export JAVA_HOME=/usr/local/sdkman/candidates/java/current" > /usr/local/airflow/hadoop/conf/hadoop-env.sh' \
+    && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/hadoop/conf && \
+       ls -lrth ${AIRFLOW_USER_HOME}/hadoop/conf' \
+    && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/data && \
+       ls -lrth ${AIRFLOW_USER_HOME}/data' \
+    && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/dags && \
+       ls -lrth ${AIRFLOW_USER_HOME}/dags' \
+    && /bin/bash -c 'export PYENV_ROOT="/usr/local/pyenv" && curl https://pyenv.run | /bin/bash' \
+    && /bin/bash -c 'export PATH="/usr/local/pyenv/bin:$PATH" && pyenv install 3.6.8' \
+    && /bin/bash -c '{ \
+                        echo boto3; \
+                        echo matplotlib==3.2.1; \
+                        echo flask; \
+                        echo pyarrow==0.14.0; \
+                        echo numpy==1.15.0; \
+                        echo tabulate; \
+                        echo tldextract; \
+                        echo pytest; \
+                        echo pandas==0.25.3; \
+                        echo pyyaml; \
+                        echo python-dateutil; \
+                        echo requests; \
+                        echo seaborn; } > requirements.txt'
+    && '/usr/local/pyenv/versions/3.6.8/bin/pip3.6 install -r requirements.txt'
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
-
-# install sdkman and using it java and and spark-submit
-RUN /bin/bash -c 'export SDKMAN_DIR="/usr/local/sdkman" && curl -s "https://get.sdkman.io?rcupdate=false" | /bin/bash'
-RUN /bin/bash -c 'export SDKMAN_DIR="/usr/local/sdkman" && source /usr/local/sdkman/bin/sdkman-init.sh && \
-sdk install java 8.0.252.hs-adpt && \
-sdk install spark 2.4.6'
-
-RUN /bin/bash -c 'cp /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh.template /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh && \
-echo JAVA_HOME=/usr/local/sdkman/candidates/java/current >> /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh'
-
-WORKDIR /tmp
-
-RUN /bin/bash -c 'wget https://github.com/peak/s5cmd/releases/download/v1.0.0/s5cmd_1.0.0_Linux-64bit.tar.gz && \
-tar -xvf s5cmd_1.0.0_Linux-64bit.tar.gz && \
-mv s5cmd /usr/local/bin/ && \
-chmod +x /usr/local/bin/s5cmd'
-
-
-RUN /bin/bash -c 'wget https://github.com/colinmarc/hdfs/releases/download/v2.1.1/gohdfs-v2.1.1-linux-amd64.tar.gz && \
-tar -xvf gohdfs-v2.1.1-linux-amd64.tar.gz && \
-mv /tmp/gohdfs-v2.1.1-linux-amd64/hdfs /usr/local/bin/ && \
-chmod +x /usr/local/bin/hdfs'
-
-RUN /bin/bash -c 'rm -rf /tmp/*'
-
-RUN /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/hadoop/conf && \
-ls -lrth ${AIRFLOW_USER_HOME}/hadoop/conf'
-
-RUN /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/data && \
-ls -lrth ${AIRFLOW_USER_HOME}/data'
-
-RUN /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/dags && \
-ls -lrth ${AIRFLOW_USER_HOME}/dags'
-
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
 
 EXPOSE 8080 5555 8793
@@ -120,11 +141,24 @@ EXPOSE 8080 5555 8793
 USER airflow
 
 # envs
+# to access s3
 ENV AWS_ACCESS_KEY_ID="placeholder_access_key_id"
 ENV AWS_SECRET_ACCESS_KEY="placeholder_secret_access_key"
+
+# java
+ENV JAVA_HOME="/usr/local/sdkman/candidates/java/current"
+
+# to access hdfs
 ENV HADOOP_HOME="${AIRFLOW_USER_HOME}/hadoop"
-# volume -v /var/lib/mesos/spark/spark-2.4.6-bin-hadoop2.7/hdfs:/usr/local/airflow/hadoop/conf
 ENV HADOOP_CONF_DIR="${AIRFLOW_USER_HOME}/hadoop/conf"
+
+#to enable pyspark
+PYSPARK_PYTHON="/usr/local/pyenv/versions/3.6.8/bin/python3.6"
+PYSPARK_DRIVER_PYTHON="/usr/local/pyenv/versions/3.6.8/bin/python3.6"
+
+# spark local ip is required if starting jobs in client mode
+SPARK_LOCAL_IP="<placeholder>"
+
 
 #airflow env vars
 ENV AIRFLOW__CORE__FERNET_KEY="placeholder"
@@ -132,7 +166,6 @@ ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN="placeholder"
 ENV AIRFLOW_CONN_SPARK_OVH="placeholder"
 ENV AIRFLOW_CONN_AWS_OVH="placeholder"
 ENV EXECUTOR="placeholder"
-
 
 
 WORKDIR ${AIRFLOW_USER_HOME}
