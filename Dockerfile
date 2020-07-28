@@ -116,12 +116,21 @@ RUN set -ex \
        ls -lrth ${AIRFLOW_USER_HOME}/data' \
     && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/dags && \
        ls -lrth ${AIRFLOW_USER_HOME}/dags'
-
 RUN set -ex \
+     && apt-get update \
+     && apt-get -yqq --no-install-recommends install git libssl-dev \
      && /bin/bash -c 'git version; /usr/bin/git version;command -v git' \
+     #&& git clone https://github.com/yyuu/pyenv.git /usr/local/pyenv/ \
      && /bin/bash -c 'export PYENV_ROOT="/usr/local/pyenv" && curl https://pyenv.run | /bin/bash' \
-     && /bin/bash -c 'export PATH="/usr/local/pyenv/bin:$PATH" && pyenv install 3.6.8' \
-     && /bin/bash -c '{ \
+     && echo 'export PYENV_ROOT="/usr/local/pyenv"' >> ~/.bashrc \
+     && echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc \
+     && echo 'eval "$(pyenv init -)"' >> ~/.bashrc \
+     && echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc \
+     && cat ~/.bashrc \
+     && /bin/bash -c 'source ~/.bashrc && pyenv install 3.6.8'
+     #&& /bin/bash -c 'export PATH="/usr/local/pyenv/bin:$PATH" && eval "$(pyenv init -)" && "/usr/local/pyenv/bin/pyenv install 3.6.8"'
+
+RUN { \
                         echo boto3; \
                         echo matplotlib==3.2.1; \
                         echo flask; \
@@ -134,8 +143,8 @@ RUN set -ex \
                         echo pyyaml; \
                         echo python-dateutil; \
                         echo requests; \
-                        echo seaborn; } > requirements.txt' \
-     && '/usr/local/pyenv/versions/3.6.8/bin/pip3.6 install -r requirements.txt'
+                        echo seaborn; } > requirements.txt \
+     && /bin/bash -c '/usr/local/pyenv/versions/3.6.8/bin/pip3.6 install -r requirements.txt'
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
