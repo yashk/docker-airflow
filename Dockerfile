@@ -96,14 +96,15 @@ RUN set -ex \
        echo JAVA_HOME=/usr/local/sdkman/candidates/java/current >> /usr/local/sdkman/candidates/spark/current/conf/spark-env.sh' \
     && /bin/bash -c 'wget https://github.com/peak/s5cmd/releases/download/v1.0.0/s5cmd_1.0.0_Linux-64bit.tar.gz && \
        tar -xvf s5cmd_1.0.0_Linux-64bit.tar.gz && \
-       mv s5cmd /usr/local/bin/ && \
-       rm -rf s5cmd_1.0.0_Linux-64bit.tar.gz CHANGELOG.md LICENSE README.md\
-       chmod +x /usr/local/bin/s5cmd' \
+       cp s5cmd /usr/local/bin/ && \
+       chmod +x /usr/local/bin/s5cmd && \
+       ls -lrth /usr/local/bin/s5cmd && \
+       rm -f s5cmd_1.0.0_Linux-64bit.tar.gz CHANGELOG.md LICENSE README.md' \
     && /bin/bash -c 'wget https://github.com/colinmarc/hdfs/releases/download/v2.1.1/gohdfs-v2.1.1-linux-amd64.tar.gz && \
        tar -xvf gohdfs-v2.1.1-linux-amd64.tar.gz && \
-       mv gohdfs-v2.1.1-linux-amd64/hdfs /usr/local/bin/ && \
-       rm -rf  gohdfs-v2.1.1-linux-amd64.tar.gz gohdfs-v2.1.1-linux-amd64 && \
-       chmod +x /usr/local/bin/hdfs' \
+       cp gohdfs-v2.1.1-linux-amd64/hdfs /usr/local/bin/ && \
+       chmod +x /usr/local/bin/hdfs && \
+       rm -rf  gohdfs-v2.1.1-linux-amd64.tar.gz gohdfs-v2.1.1-linux-amd64' \
     && /bin/bash -c 'mkdir -p ${AIRFLOW_USER_HOME}/hadoop/conf && \
            ls -lrth ${AIRFLOW_USER_HOME}/hadoop/conf' \
     && /bin/bash -c 'wget http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/hadoop-2.7.3.tar.gz && \
